@@ -23,8 +23,6 @@ export class AuthController {
 
   @Get('profile')
   getProfile(@Request() req) {
-    console.log('profile');
-    console.log(req.user);
     return {
       message: 'User data retrieved successfully',
       user: req.user || null, // Покажет данные, если они есть
