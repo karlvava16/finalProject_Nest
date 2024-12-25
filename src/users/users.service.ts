@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,13 +12,21 @@ export class UsersService {
     private usersRepository: Repository<User>
   ) {}
 
-  // Метод для создания пользователя с заполнением необязательных полей
+  // Метод для создания пользователя с проверкой на существование почты
   async create(user: Partial<CreateUserDto>): Promise<User> {
+    // Проверяем, существует ли пользователь с таким email
+    const existingUser = await this.usersRepository.findOneBy({
+      email: user.email,
+    });
+    if (existingUser) {
+      throw new Error('User with this email already exists'); // Генерируем исключение, если email уже занят
+    }
+
     const defaultValues: Partial<User> = {
-      phoneNumber: null, // Значение по умолчанию
-      isVerified: false, // Пользователь не верифицирован по умолчанию
-      createdAt: new Date(), // Текущая дата
-      updatedAt: new Date(), // Текущая дата
+      phoneNumber: null,
+      isVerified: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     const newUser = this.usersRepository.create({
@@ -34,24 +42,38 @@ export class UsersService {
   }
 
   async remove(id: number): Promise<void> {
+    // Проверяем, существует ли пользователь с таким ID
+    const user = await this.usersRepository.findOneBy({ id });
+    if (!user) {
+      throw new NotFoundException('User not found'); // Генерируем исключение, если пользователь не найден
+    }
     await this.usersRepository.delete(id);
   }
 
-  // Метод для отримання всіх користувачів
   async findAll(): Promise<User[]> {
     return await this.usersRepository.find();
   }
 
-  findOne(id: number): Promise<User | null> {
+  async findOne(id: number): Promise<User | null> {
     return this.usersRepository.findOneBy({ id });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User | null> {
-    // Находим пользователя по ID
+    // Проверяем, существует ли пользователь с таким ID
     const user = await this.usersRepository.findOneBy({ id });
 
     if (!user) {
-      return null; // Если пользователь не найден, возвращаем null
+      throw new Error('User not found'); // Генерируем исключение, если пользователь не найден
+    }
+
+    // Проверка на уникальность email при обновлении
+    if (updateUserDto.email) {
+      const existingUser = await this.usersRepository.findOneBy({
+        email: updateUserDto.email,
+      });
+      if (existingUser && existingUser.id !== id) {
+        throw new Error('User with this email already exists');
+      }
     }
 
     // Обновляем только переданные поля

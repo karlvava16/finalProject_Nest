@@ -26,7 +26,7 @@ import { User } from './users/entities/user.entity';
       password: 'root',
       database: 'nest_project',
       entities: [User], // __dirname + '/**/*.entity{.ts,.js}'
-      synchronize: false, // Тільки для розробки, у продакшені вимкніть
+      synchronize: true, // Тільки для розробки, у продакшені вимкніть
       autoLoadEntities: true,
     }),
     AdsModule,
