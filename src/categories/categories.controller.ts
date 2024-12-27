@@ -2,7 +2,7 @@ import { Controller, Get, Post, Delete, Param, Body } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CategoryEntity } from './entities/category.entity';
 import { Public } from '../auth/decorators/public.decorator';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { CreateCategoryDto } from './dto/create-category.dto';
 
 @Controller('categories')
@@ -31,6 +31,7 @@ export class CategoriesController {
     return await this.categoriesService.findSubcategories(parentId);
   }
 
+  @ApiBearerAuth()
   @ApiBody({ type: CreateCategoryDto })
   @Post()
   async addCategory(
@@ -40,6 +41,7 @@ export class CategoriesController {
     return await this.categoriesService.addCategory(name, parentCategoryId);
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
   async deleteCategory(@Param('id') id: number): Promise<{ success: boolean }> {
     const success = await this.categoriesService.deleteCategory(id);
