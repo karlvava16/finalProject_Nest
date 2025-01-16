@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class AuthEntity {
+export class AuthModel {
   @ApiProperty()
   email: string;
   @ApiProperty()

@@ -1,27 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CategoryEntity } from './entities/category.entity';
+import { Category } from '../entities/category.entity';
 
 @Injectable()
 export class CategoriesService {
   constructor(
-    @InjectRepository(CategoryEntity)
-    private categoryRepository: Repository<CategoryEntity>
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>
   ) {}
 
   // Get all entities
-  async findAll(): Promise<CategoryEntity[]> {
+  async findAll(): Promise<Category[]> {
     return await this.categoryRepository.find();
   }
 
   // Find category by ID
-  async findOneById(id: number): Promise<CategoryEntity | undefined> {
+  async findOneById(id: number): Promise<Category | undefined> {
     return await this.categoryRepository.findOneBy({ id });
   }
 
   // Find subcategories by parent ID
-  async findSubcategories(parentId: number): Promise<CategoryEntity[]> {
+  async findSubcategories(parentId: number): Promise<Category[]> {
     return await this.categoryRepository.find({
       where: { parentCategoryId: parentId },
     });
@@ -31,7 +31,7 @@ export class CategoriesService {
   async addCategory(
     name: string,
     parentCategoryId?: number
-  ): Promise<CategoryEntity> {
+  ): Promise<Category> {
     const newCategory = this.categoryRepository.create({
       name,
       parentCategoryId: parentCategoryId || null,

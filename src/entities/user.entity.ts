@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Role } from "../enums/role.enum";
 
 @Entity('users')
 export class User {
@@ -31,4 +32,7 @@ export class User {
 
   @Column({ default: false })
   isVerified: boolean;
+
+  @Column({ default: false })
+  isAdmin: boolean;
 }

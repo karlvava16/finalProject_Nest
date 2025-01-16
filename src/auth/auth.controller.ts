@@ -8,9 +8,9 @@ import {
   Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Public } from './decorators/public.decorator';
+import { Public } from '../decorators/public.decorator';
 import { ApiBody, ApiProperty } from '@nestjs/swagger';
-import { AuthEntity } from './model/auth.entity';
+import { AuthModel } from '../models/auth.model';
 
 // Import the SignInDto class
 
@@ -22,7 +22,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @ApiProperty()
-  @ApiBody({ type: AuthEntity })
+  @ApiBody({ type: AuthModel })
   signIn(@Body() signInDto: Record<string, any>) {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }

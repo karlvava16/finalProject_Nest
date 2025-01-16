@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Delete, Param, Body } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { CategoryEntity } from './entities/category.entity';
-import { Public } from '../auth/decorators/public.decorator';
+import { Category } from '../entities/category.entity';
+import { Public } from '../decorators/public.decorator';
 import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
-import { CreateCategoryDto } from './dto/create-category.dto';
+import { CreateCategoryDto } from '../dto/category-dto/create-category.dto';
 
 @Controller('categories')
 export class CategoriesController {
@@ -11,7 +11,7 @@ export class CategoriesController {
 
   @Public()
   @Get()
-  async findAll(): Promise<CategoryEntity[]> {
+  async findAll(): Promise<Category[]> {
     return await this.categoriesService.findAll();
   }
 
@@ -19,7 +19,7 @@ export class CategoriesController {
   @Get(':id')
   async findOneById(
     @Param('id') id: number
-  ): Promise<CategoryEntity | undefined> {
+  ): Promise<Category | undefined> {
     return await this.categoriesService.findOneById(id);
   }
 
@@ -27,7 +27,7 @@ export class CategoriesController {
   @Get('subcategories/:parentId')
   async findSubcategories(
     @Param('parentId') parentId: number
-  ): Promise<CategoryEntity[]> {
+  ): Promise<Category[]> {
     return await this.categoriesService.findSubcategories(parentId);
   }
 
@@ -37,7 +37,7 @@ export class CategoriesController {
   async addCategory(
     @Body('name') name: string,
     @Body('parentCategoryId') parentCategoryId?: number
-  ): Promise<CategoryEntity> {
+  ): Promise<Category> {
     return await this.categoriesService.addCategory(name, parentCategoryId);
   }
 

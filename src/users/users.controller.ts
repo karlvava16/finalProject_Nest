@@ -7,13 +7,19 @@ import {
   Param,
   Delete,
   NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+  ConflictException, UseGuards
+} from "@nestjs/common";
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { Public } from '../auth/decorators/public.decorator';
+import { CreateUserDto } from '../dto/user-dto/create-user.dto';
+import { UpdateUserDto } from '../dto/user-dto/update-user.dto';
+import { Public } from '../decorators/public.decorator';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { PoliciesGuard } from "../guards/policies.guard";
+import { CheckPolicies } from "../decorators/policy.decorator";
+import { AppAbility } from "../casl/casl-ability.factory";
+import { Action } from "../enums/action.enum";
+import { AuthGuard } from "../auth/auth.guard";
+
 
 @ApiTags('Users')
 @Controller('users')
@@ -37,6 +43,8 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Article))
   findAll() {
     return this.usersService.findAll();
   }

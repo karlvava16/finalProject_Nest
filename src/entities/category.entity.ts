@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 @Entity('categories')
-export class CategoryEntity {
+export class Category{
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -19,13 +19,13 @@ export class CategoryEntity {
   @Column({ nullable: true })
   parentCategoryId: number | null;
 
-  @ManyToOne(() => CategoryEntity, (category) => category.subcategories, {
+  @ManyToOne(() => Category, (category) => category.subcategories, {
     nullable: true,
   })
-  parentCategory: CategoryEntity | null;
+  parentCategory: Category | null;
 
-  @OneToMany(() => CategoryEntity, (category) => category.parentCategory)
-  subcategories: CategoryEntity[];
+  @OneToMany(() => Category, (category) => category.parentCategory)
+  subcategories: Category[];
 
   @CreateDateColumn()
   createdAt: Date;

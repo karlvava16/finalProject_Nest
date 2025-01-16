@@ -10,11 +10,17 @@ import { ImagesModule } from './images/images.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AdsModule } from './ads/ads.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/entities/user.entity';
+import { User } from './entities/user.entity';
+import { CaslModule } from './casl/casl.module';
+import { APP_GUARD } from "@nestjs/core";
+import { PoliciesGuard } from "./guards/policies.guard";
 
 @Module({
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,  {
+    provide: APP_GUARD,
+    useClass: PoliciesGuard,
+  },],
   imports: [
     UsersModule,
     AuthModule,
@@ -25,7 +31,7 @@ import { User } from './users/entities/user.entity';
       username: 'root',
       password: 'root',
       database: 'nest_project',
-      entities: [User], // __dirname + '/**/*.entity{.ts,.js}'
+      entities: [User], // __dirname + '/**/*.entities{.ts,.js}'
       synchronize: true, // Тільки для розробки, у продакшені вимкніть
       autoLoadEntities: true,
     }),
@@ -35,6 +41,7 @@ import { User } from './users/entities/user.entity';
     MessagesModule,
     SearchLogsModule,
     ApiLogsModule,
+    CaslModule,
   ],
 })
 export class AppModule {}
